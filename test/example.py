@@ -6,8 +6,8 @@ import HandTrackingModule as htm
  
 pTime = 0
 cTime = 0
-# cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture("video.mp4")
+cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture("video.mp4")
 detector = htm.handDetector()
 while True:
     success, img = cap.read()
