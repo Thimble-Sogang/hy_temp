@@ -11,14 +11,15 @@ class handDetector():
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands(self.mode,self.maxHands,self.detectionCon,self.trackCon)
         self.mpDraw = mp.solutions.drawing_utils
-    def findHands(self,img,draw=False):
+    def findHands(self,img,draw=True):
         #success, img = cap.read()
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
         # result에 핸드 info가 들어가는듯?
-        # check multiple hand?
-        #print(self.results.multi_hand_landmarks)
         if self.results.multi_hand_landmarks:
+            # z좌표 뽑기
+            # print(self.results.multi_hand_landmarks)
+
             for handLms in self.results.multi_hand_landmarks:
                 if draw:
                     self.mpDraw.draw_landmarks(img, handLms, self.mpHands.HAND_CONNECTIONS)
@@ -88,7 +89,7 @@ class handDetector():
             #rad->degree
             slope=rad*180/math.pi
 
-            if topList[i][1]>=botList[i][1]: #손가라 아래쪽
+            if topList[i][1]>=botList[i][1]: #손가락 아래쪽
                 slope=slope-180
             else: #손가락 위쪽
                 #if topList[i][0]>botList[i][0]:
@@ -102,5 +103,7 @@ class handDetector():
             cx=C_list[i][0]
             cy=C_list[i][1]
             cv2.ellipse(img,(int(cx),int(cy)),(int(L_list[i]/2),int(L_list[i]/4)),S_list[i],startAngle=0,endAngle=360,color=(0,0,0),thickness=-1)
-
+    #거리 측정
+    def getDistance(self,first,second):
+        return (first[1]-second[1])*(first[1]-second[1])+(first[2]-second[2])*(first[2]-second[2])
 
