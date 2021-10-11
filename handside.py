@@ -14,11 +14,10 @@ def get_label(index, hand, results):
     back = 0
     for idx, classification in enumerate(results.multi_handedness):
         if classification.classification[0].index == index:
-            # Process results
-            label = classification.classification[0].label
-            score = classification.classification[0].score
-            text = '{} {}'.format(label, round(score, 2))
-            # 중지 - 손목 : 양수면 아래방향, 음수면 위
+            # 결과를 위한 내용
+            # label = classification.classification[0].label
+            # score = classification.classification[0].score
+            # text = '{} {}'.format(label, round(score, 2))
             # idx 0 왼손 / 1 오른손
             
             # 왼손 위
@@ -113,7 +112,7 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
                 # Render left or right detection
                 back = get_label(num, hand, results)
                 if back :
-                  print("NONONONONONO")
+                  print("NNNNNNNNNNNNN")
                 else :
                   print("YYYYYYYYYYYYY")
                    
