@@ -7,8 +7,8 @@ import HandTrackingModule as htm
 pTime = 0
 cTime = 0
 cap = cv2.VideoCapture(0)
-# cap = cv2.VideoCapture("video.mp4")
 detector = htm.handDetector()
+
 while True:
     success, img = cap.read()
     img = detector.findHands(img, draw=True )
@@ -22,7 +22,7 @@ while True:
     S_list=detector.findFingerSlope(topList,botList,L_list)
 
     detector.FingerPrintExpress(img,C_list,L_list,S_list)
-    cv2.imshow("FingerPrintArea", img)
-
+    img = cv2.flip(img,1)
     cv2.imshow("Image", img)
-    cv2.waitKey(1)
+    if cv2.waitKey(10) & 0xFF == ord('q'):
+            break
