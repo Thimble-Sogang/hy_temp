@@ -4,12 +4,15 @@ import cv2
 import numpy as np
 import uuid
 import os
+import HandTrackingModule as htm
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
+detector = htm.handDetector()
 
 joint_list = [[8,7,6], [12,11,10], [16,15,14], [20,19,18]]
 
+# 블러 처리 여부 판단 (1이면 no blur, 0이면 blur)
 def get_label(index, hand, results):
     back = 0
     for idx, classification in enumerate(results.multi_handedness):
@@ -79,7 +82,6 @@ cap = cv2.VideoCapture(0)
 with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) as hands: 
     while cap.isOpened():
         ret, frame = cap.read()
-        
         # BGR 2 RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         
@@ -104,26 +106,38 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
         # Rendering results
         if results.multi_hand_landmarks:
             for num, hand in enumerate(results.multi_hand_landmarks):
-                mp_drawing.draw_landmarks(image, hand, mp_hands.HAND_CONNECTIONS, 
-                                        mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4),
-                                        mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2),
-                                         )
+                # mp_drawing.draw_landmarks(image, hand, mp_hands.HAND_CONNECTIONS, 
+                #                         mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4),
+                #                         mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2),
+                #                          )
                 
                 # Render left or right detection
                 back = get_label(num, hand, results)
+
                 if back :
                   print("NNNNNNNNNNNNN")
                 else :
                   print("YYYYYYYYYYYYY")
-                   
+                  ### test add line
+                  image = detector.findHands(image, draw=True )
+                  lmList = detector.findPosition(image, draw=False)
 
-            
+                  # findFingerTipPosition은 손이 감지 되지 않으면 에러가 발생합니다.
+                  topList, botList=detector.findFingerTipPosition(image,draw=False)
+
+                  L_list=detector.findFingerTipLength(topList,botList)
+                  C_list=detector.findFingerCenter(topList,botList)
+                  S_list=detector.findFingerSlope(topList,botList,L_list)
+
+                  detector.FingerPrintExpress(image,C_list,L_list,S_list)
+                  ### test add line
+
             # Draw angles to image from joint list
-            draw_finger_angles(image, results, joint_list)
+            # draw_finger_angles(image, results, joint_list)
             
         # Save our image    
         #cv2.imwrite(os.path.join('Output Images', '{}.jpg'.format(uuid.uuid1())), image)
-        cv2.imshow('Hand Tracking', image)
+        cv2.imshow('FingerPrintArea', image)
 
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
