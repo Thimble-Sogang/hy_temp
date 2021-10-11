@@ -24,31 +24,27 @@ def get_label(index, hand, results):
             # 왼손 위
             if idx==0 and (hand.landmark[12].y - hand.landmark[0].y < 0 ):
                 if hand.landmark[17].x - hand.landmark[0].x <0 :
-                    print("left palm")
+                    back=0
                 else :
-                    print("left back")
                     back=1
             # 왼손 아래
             elif idx==0 and (hand.landmark[12].y - hand.landmark[0].y >= 0 ): 
                 if hand.landmark[17].x - hand.landmark[0].x >=0 :
-                    print("left palm")
+                    back=0
                 else :
                     back=1
-                    print("left back")
             # 오른손 아래
             if idx==1 and (hand.landmark[12].y - hand.landmark[0].y >= 0 ): 
                 if hand.landmark[17].x - hand.landmark[0].x <0 :
-                    print("right palm")
+                    back=0
                 else :
                     back=1
-                    print("right back")
             # 오른손 위
             elif idx==1 and (hand.landmark[12].y - hand.landmark[0].y < 0 ): 
                 if hand.landmark[17].x - hand.landmark[0].x <0 :
                     back=1
-                    print("right back")
                 else :
-                    print("right palm")
+                    back=0
             
             # # Extract Coordinates
             # coords = tuple(np.multiply(
