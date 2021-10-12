@@ -1,6 +1,39 @@
 from cvzone.HandTrackingModule import HandDetector
 import cv2
 
+# 블러 처리 여부 판단 (1이면 no blur, 0이면 blur)
+def get_label(type,lmList):
+    back = 0
+    # 왼손 위
+    if type=="Left" and (lmList[12][1] - lmList[0][1] < 0 ):
+        if lmList[0][0] - lmList[2][0] >0 :
+            back=0
+        else :
+            back=1
+    # 왼손 아래
+    elif type=="Left" and (lmList[12][1] - lmList[0][1] >= 0 ): 
+        if lmList[0][0] - lmList[2][0] <0 :
+            back=0
+        else :
+            back=1
+    # 오른손 아래
+    if type=="Right" and (lmList[12][1] - lmList[0][1] >= 0 ): 
+        if lmList[17][0] - lmList[0][0] <0 :
+            back=0
+        else :
+            back=1
+    # 오른손 위
+    elif type=="Right" and (lmList[12][1] - lmList[0][1] < 0 ): 
+        if lmList[17][0] - lmList[0][0] <0 :
+            back=1
+        else :
+            back=0
+
+    print(back)
+    return back
+
+
+
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands=2)
 while True:
@@ -18,8 +51,8 @@ while True:
         centerPoint1 = hand1['center']  # center of the hand cx,cy
         handType1 = hand1["type"]  # Handtype Left or Right
         
-        # 왼손 오른손 출력
-        print(handType1)
+        # 블러처리 판단함수 
+        get_label(handType1,lmList1)
 
         if len(hands) == 2:
             # 손이 2개일 경우
@@ -29,8 +62,8 @@ while True:
             centerPoint2 = hand2['center']  # center of the hand cx,cy
             handType2 = hand2["type"]  # Hand Type "Left" or "Right"
             
-            # 왼손 오른손 출력
-            print(handType2)
+           # 블러처리 판단함수 
+            get_label(handType2,lmList2)
             
             fingers2 = detector.fingersUp(hand2)
 
