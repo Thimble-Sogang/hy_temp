@@ -1,35 +1,58 @@
 from cvzone.HandTrackingModule import HandDetector
 import cv2
 
-# 블러 처리 여부 판단 (1이면 no blur, 0이면 blur)
 def get_label(type,lmList):
     back = 0
     # 왼손 위
     if type=="Left" and (lmList[12][1] - lmList[0][1] < 0 ):
-        if lmList[0][0] - lmList[2][0] >0 :
-            back=0
+        if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("back ->")
+            else:
+                print("front ->")
         else :
-            back=1
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("back <-")
+            else:
+                print("front <-")
     # 왼손 아래
-    elif type=="Left" and (lmList[12][1] - lmList[0][1] >= 0 ): 
-        if lmList[0][0] - lmList[2][0] <0 :
-            back=0
+    elif type=="Left" and (lmList[12][1] - lmList[0][1] >= 0 ):
+        if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("front ->")
+            else:
+                print("back ->")
         else :
-            back=1
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("front <-")
+            else:
+                print("back <-")
     # 오른손 아래
     if type=="Right" and (lmList[12][1] - lmList[0][1] >= 0 ): 
-        if lmList[17][0] - lmList[0][0] <0 :
-            back=0
+        if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("back ->")
+            else:
+                print("front ->")
         else :
-            back=1
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("back <-")
+            else:
+                print("front <-")
     # 오른손 위
     elif type=="Right" and (lmList[12][1] - lmList[0][1] < 0 ): 
-        if lmList[17][0] - lmList[0][0] <0 :
-            back=1
+        if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("front ->")
+            else:
+                print("back ->")
         else :
-            back=0
+            if(lmList[5][0]-lmList[9][0]>=0):
+                print("front <-")
+            else:
+                print("back <-")
 
-    print(back)
+    # # print(back)
     return back
 
 
