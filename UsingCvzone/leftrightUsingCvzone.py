@@ -8,11 +8,13 @@ def get_label(type,lmList):
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=0):
                 print("back ->")
+                back = 1
             else:
                 print("front ->")
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
                 print("back <-")
+                back = 1
             else:
                 print("front <-")
     # 왼손 아래
@@ -22,21 +24,25 @@ def get_label(type,lmList):
                 print("front ->")
             else:
                 print("back ->")
+                back = 1
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
                 print("front <-")
             else:
                 print("back <-")
+                back = 1
     # 오른손 아래
     if type=="Right" and (lmList[12][1] - lmList[0][1] >= 0 ): 
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=0):
                 print("back ->")
+                back = 1
             else:
                 print("front ->")
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
                 print("back <-")
+                back = 1
             else:
                 print("front <-")
     # 오른손 위
@@ -46,13 +52,14 @@ def get_label(type,lmList):
                 print("front ->")
             else:
                 print("back ->")
+                back = 1
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
                 print("front <-")
             else:
                 print("back <-")
+                back = 1
 
-    # # print(back)
     return back
 
 
@@ -87,18 +94,13 @@ while True:
             
            # 블러처리 판단함수 
             get_label(handType2,lmList2)
-            
-            fingers2 = detector.fingersUp(hand2)
 
-            # Find Distance between two Landmarks. Could be same hand or different hands
-            length, info, img = detector.findDistance(lmList1[8], lmList2[8], img)  # with draw
-            # length, info = detector.findDistance(lmList1[8], lmList2[8])  # with draw
     # Display
     img = cv2.flip(img, 1)
-
-    
     cv2.imshow("Image", img)
+
     if cv2.waitKey(10) & 0xFF == ord('q'):
             break
+        
 cap.release()
 cv2.destroyAllWindows()
