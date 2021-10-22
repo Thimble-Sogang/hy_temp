@@ -179,8 +179,8 @@ while True:
     # Get image frame
     success, img = cap.read()
     # Find the hand and its landmarks
-    hands, img = detector.findHands(img)  # with draw
-
+    hands = detector.findHands(img, draw=False)  # with draw
+    
     if hands:
         # 손이 1개 일 경우
         hand1 = hands[0]

@@ -11,7 +11,7 @@ detector = htm.handDetector()
 
 while True:
     success, img = cap.read()
-    img = detector.findHands(img, draw=True )
+    img = detector.findHands(img, draw=False )
     # lmList = detector.findPosition(img, draw=False)
 
     # # findFingerTipPosition은 손이 감지 되지 않으면 에러가 발생합니다.
