@@ -98,7 +98,6 @@ class handDetector():
             S_list.append(slope)
         return S_list
     def FingerPrintExpress(self,img,C_list,L_list,S_list):
-        print(C_list)
         for i in range(len(C_list)):
             cx=C_list[i][0]
             cy=C_list[i][1]
