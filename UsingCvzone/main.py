@@ -188,15 +188,15 @@ while True:
         # bbox1 = hand1["bbox"]  # x,y,w,h로 손 아웃라인 박스 좌표
         # centerPoint1 = hand1['center']  # center of the hand cx,cy
         handType1 = hand1["type"]  # Handtype Left or Right
-
         # 지문 블러처리
         if get_label(handType1,lmList1) == 0:
-            check1 = getCheckFingers(lmList1)
+            # check1 = getCheckFingers(lmList1)
             topList, botList = findFingerTipPosition(img,lmList1)
             L_list=findFingerTipLength(topList,botList)
             C_list=findFingerCenter(topList,botList)
             S_list=findFingerSlope(topList,botList,L_list)
-            FingerPrintExpress(img,C_list,L_list,S_list,check1)
+            fingers1 = detector.fingersUp(hand1)
+            FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
             
         if len(hands) == 2:
             # 손이 2개일 경우
@@ -211,8 +211,9 @@ while True:
                 L_list=findFingerTipLength(topList,botList)
                 C_list=findFingerCenter(topList,botList)
                 S_list=findFingerSlope(topList,botList,L_list)
-                check2 = getCheckFingers(lmList2)
-                FingerPrintExpress(img,C_list,L_list,S_list,check2)
+                # check2 = getCheckFingers(lmList2)
+                fingers2 = detector.fingersUp(hand2)
+                FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
 
 
     # Display

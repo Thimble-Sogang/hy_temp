@@ -4,18 +4,18 @@ import math
 
 # 내부 함수
 def get_label(type,lmList):
-    back = 0
+    back = 1
     # 왼손 위
-    if type=="Left" and (lmList[12][1] - lmList[0][1] < 0 ):
+    if type=="Left" and (lmList[12][1] - lmList[0][1] < 0 ):      
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=-20):
                 # print("back ->")
                 back = 1
             else:
                 # print("front ->")
                 back = 0
         else :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=-20):
                 # print("back <-")
                 back = 1
             else:
@@ -25,14 +25,14 @@ def get_label(type,lmList):
     # 왼손 아래
     elif type=="Left" and (lmList[12][1] - lmList[0][1] >= 0 ):
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=20):
                 # print("front ->")
                 back = 0
             else:
                 # print("back ->")
                 back = 1
         else :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=20):
                 # print("front <-")
                 back = 0
             else:
@@ -41,14 +41,14 @@ def get_label(type,lmList):
     # 오른손 아래
     if type=="Right" and (lmList[12][1] - lmList[0][1] >= 0 ): 
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=-20):
                 # print("back ->")
                 back = 1
             else:
                 # print("front ->")
                 back = 0
         else :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=-20):
                 # print("back <-")
                 back = 1
             else:
@@ -57,14 +57,14 @@ def get_label(type,lmList):
     # 오른손 위
     elif type=="Right" and (lmList[12][1] - lmList[0][1] < 0 ): 
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=20):
                 # print("front ->")
                 back = 0
             else:
                 # print("back ->")
                 back = 1
         else :
-            if(lmList[5][0]-lmList[9][0]>=0):
+            if(lmList[5][0]-lmList[9][0]>=20):
                 back = 0
                 # print("front <-")
             else:
@@ -172,15 +172,17 @@ def getCheckFingers(lmList):
         check[4]=True
     return check
 
-# main
-cap = cv2.VideoCapture('./input.webm')
-# 영상 크기
+# main input video
+cap = cv2.VideoCapture('./input.mp4')
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-out = cv2.VideoWriter('output.avi', fourcc, 30.0, (int(width), int(height)))
+out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (int(width), int(height)))
 
-detector = HandDetector(detectionCon=0.8, maxHands=2)
+# main : web cam check
+# cap = cv2.VideoCapture(0)
+
+detector = HandDetector(detectionCon=0.7, maxHands=2)
 while True:
     # Get image frame
     success, img = cap.read()
@@ -197,12 +199,13 @@ while True:
 
         # 지문 블러처리
         if get_label(handType1,lmList1) == 0:
-            check1 = getCheckFingers(lmList1)
+            # check1 = getCheckFingers(lmList1)
             topList, botList = findFingerTipPosition(img,lmList1)
             L_list=findFingerTipLength(topList,botList)
             C_list=findFingerCenter(topList,botList)
             S_list=findFingerSlope(topList,botList,L_list)
-            FingerPrintExpress(img,C_list,L_list,S_list,check1)
+            fingers1 = detector.fingersUp(hand1)
+            FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
             
         if len(hands) == 2:
             # 손이 2개일 경우
@@ -216,12 +219,14 @@ while True:
                 topList, botList = findFingerTipPosition(img,lmList2)
                 L_list=findFingerTipLength(topList,botList)
                 C_list=findFingerCenter(topList,botList)
-                S_list=findFingerSlope(topList,botList,L_list)
-                check2 = getCheckFingers(lmList2)
-                FingerPrintExpress(img,C_list,L_list,S_list,check2)
+                S_list=findFingerSlope(topList,botList,L_list)  
+                # check2 = getCheckFingers(lmList2)
+                fingers2 = detector.fingersUp(hand2)
+                FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
 
 
     # Display
+    # img = cv2.flip(img, 1)
     cv2.imshow("Image", img)
     out.write(img)
 
