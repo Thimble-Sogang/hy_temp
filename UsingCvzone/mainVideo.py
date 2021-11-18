@@ -92,8 +92,6 @@ def findFingerCenter(toplist,botList):
 def findFingerSlope(topList,botList,L_list):
     S_list=[]
     for i in range(len(topList)):
-        #print(L_list[i])
-        #print(botList[i][1]-topList[i][1])
         if L_list[i]==0:
             L_list[i]=1
         rad=math.acos((topList[i][0]-botList[i][0])/L_list[i])
@@ -103,10 +101,8 @@ def findFingerSlope(topList,botList,L_list):
         if topList[i][1]>=botList[i][1]: #손가락 아래쪽
             slope=slope-180
         else: #손가락 위쪽
-            #if topList[i][0]>botList[i][0]:
-                slope = 180 - slope
+            slope = 180 - slope
 
-        # print(slope)
         S_list.append(slope)
     return S_list
 
@@ -142,36 +138,6 @@ def findFingerTipPosition(img,lmList):
 def getDistance(x,y):
     return (x[0]-y[0])*(x[0]-y[0])+(x[1]-y[1])*(x[1]-y[1])
 
-# 블러를 처리해야할지 말지를 손가락마다 정함
-def getCheckFingers(lmList):
-    check =[True,True,True,True,True]
-    # 엄지
-    if(getDistance(lmList[4],lmList[9]) < getDistance(lmList[4],lmList[2])):
-        check[0]=False
-    else:
-        check[0]=True
-    # 2
-    if(getDistance(lmList[8],lmList[6])) > getDistance(lmList[8],lmList[5]):
-        check[1]=False
-    else:
-        check[1]=True
-    # 3
-    if(getDistance(lmList[12],lmList[10])) > getDistance(lmList[12],lmList[9]):
-        check[2]=False
-    else:
-        check[2]=True
-    # 4
-    if(getDistance(lmList[16],lmList[14])) > getDistance(lmList[16],lmList[13]):
-        check[3]=False
-    else:
-        check[3]=True
-    # 5
-    if(getDistance(lmList[20],lmList[18])) > getDistance(lmList[20],lmList[17]):
-        check[4]=False
-    else:
-        check[4]=True
-    return check
-
 # main input video
 cap = cv2.VideoCapture('./input.mp4')
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -193,13 +159,10 @@ while True:
         # 손이 1개 일 경우
         hand1 = hands[0]
         lmList1 = hand1["lmList"]  # 21개 랜드마크
-        # bbox1 = hand1["bbox"]  # x,y,w,h로 손 아웃라인 박스 좌표
-        # centerPoint1 = hand1['center']  # center of the hand cx,cy
         handType1 = hand1["type"]  # Handtype Left or Right
 
         # 지문 블러처리
         if get_label(handType1,lmList1) == 0:
-            # check1 = getCheckFingers(lmList1)
             topList, botList = findFingerTipPosition(img,lmList1)
             L_list=findFingerTipLength(topList,botList)
             C_list=findFingerCenter(topList,botList)
@@ -211,8 +174,6 @@ while True:
             # 손이 2개일 경우
             hand2 = hands[1]
             lmList2 = hand2["lmList"]  # 21개 랜드마크
-            # bbox2 = hand2["bbox"]  # x,y,w,h로 손 아웃라인 박스 좌표
-            # centerPoint2 = hand2['center']  # center of the hand cx,cy
             handType2 = hand2["type"]  # Hand Type "Left" or "Right"
             # 지문 블러처리
             if get_label(handType2,lmList2) == 0:
@@ -220,7 +181,6 @@ while True:
                 L_list=findFingerTipLength(topList,botList)
                 C_list=findFingerCenter(topList,botList)
                 S_list=findFingerSlope(topList,botList,L_list)  
-                # check2 = getCheckFingers(lmList2)
                 fingers2 = detector.fingersUp(hand2)
                 FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
 
