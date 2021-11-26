@@ -18,9 +18,7 @@ def getAngle(lmList):
 def get_label(type,lmList):
     back = 1
     below = 0
-    
     angle = getAngle(lmList)
-    
     # 왼손 위
     if type=="Left" and (lmList[12][1] - lmList[0][1] < 0 ):      
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
@@ -28,7 +26,7 @@ def get_label(type,lmList):
                 # print("back ->")
                 back = 1
             else:
-                if angle < 60 and angle > 110 :
+                if angle < 70 and angle > 100 :
                     back=1
                 else:
                     # print("front ->")
@@ -38,7 +36,7 @@ def get_label(type,lmList):
                 # print("back <-")
                 back = 1
             else:
-                if angle < 60 and angle > 110 :
+                if angle < 70 and angle > 100 :
                     back=1
                 else:
                     # print("front <-")
@@ -52,7 +50,7 @@ def get_label(type,lmList):
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=0):
                 # print("front ->")
-                if angle < 60 or angle > 110 :
+                if angle < 70 or angle > 100 :
                     back=1
                 else:
                     back = 0
@@ -62,7 +60,7 @@ def get_label(type,lmList):
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
                 # print("front <-")
-                if angle < 60 or angle > 110 :
+                if angle < 70 or angle > 100 :
                     back=1
                 else:
                     back = 0
@@ -78,7 +76,7 @@ def get_label(type,lmList):
                 # print("back ->")
                 back = 1
             else:
-                if angle < 60 or angle > 110 :
+                if angle < 70 or angle > 100 :
                     back=1
                 else:
                     # print("front ->")
@@ -88,7 +86,7 @@ def get_label(type,lmList):
                 # print("back <-")
                 back = 1
             else:
-                if angle < 60 or angle > 110 :
+                if angle < 70 or angle > 100 :
                     back=1
                 else:
                     # print("front <-")
@@ -97,7 +95,7 @@ def get_label(type,lmList):
     elif type=="Right" and (lmList[12][1] - lmList[0][1] < 0 ): 
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=0):
-                if angle < 60 or angle > 110 :
+                if angle < 70 or angle > 100 :
                     back=1
                 else:
                     # print("front ->")
@@ -107,7 +105,7 @@ def get_label(type,lmList):
                 back = 1
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
-                if angle < 60 or angle > 110 :
+                if angle < 70 or angle > 100 :
                     back=1
                 else:
                     back = 0
@@ -115,7 +113,6 @@ def get_label(type,lmList):
             else:
                 # print("back <-")
                 back = 1
-    print(angle)
     return back,below
 
 def findFingerTipLength(toplist, botList):
@@ -164,7 +161,8 @@ def FingerPrintExpress(img,C_list,L_list,S_list,check):
     for i in range(len(c_list)):
         cx=c_list[i][0]
         cy=c_list[i][1]
-        cv2.ellipse(img,(int(cx),int(cy)),(int(l_list[i]/2),int(l_list[i]/4)),s_list[i],startAngle=0,endAngle=360,color=(0,0,0),thickness=-1)
+        if int(l_list[i]/2)*int(l_list[i]/4)>200:
+            cv2.ellipse(img,(int(cx),int(cy)),(int(l_list[i]/2),int(l_list[i]/4)),s_list[i],startAngle=0,endAngle=360,color=(0,0,0),thickness=-1)
 
 def findFingerTipPosition(img,lmList):
     topList=[]
@@ -184,14 +182,14 @@ def getDistance(x,y):
     return math.sqrt((x[0]-y[0])*(x[0]-y[0]) + (x[1]-y[1])*(x[1]-y[1]))
 
 # main input video
-# cap = cv2.VideoCapture('./input.mp4')
-# width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-# height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-# fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-# out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (int(width), int(height)))
+cap = cv2.VideoCapture('./input.mp4')
+width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (int(width), int(height)))
 
 # main : web cam check
-cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture(0)
 
 detector = HandDetector(detectionCon=0.7, maxHands=2)
 while True:
@@ -238,9 +236,9 @@ while True:
                     FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
 
     # Display
-    img = cv2.flip(img, 1)
+    # img = cv2.flip(img, 1)
     cv2.imshow("Image", img)
-    # out.write(img)
+    out.write(img)
 
     if cv2.waitKey(10) & 0xFF == ord('q'):
             break
