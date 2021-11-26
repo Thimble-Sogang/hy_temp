@@ -1,77 +1,122 @@
 from cvzone.HandTrackingModule import HandDetector
 import cv2
 import math
+import numpy as np
 
 # 내부 함수
+def getAngle(lmList):
+    x1 = lmList[1][0] - lmList[0][0]
+    y1 = lmList[1][1] - lmList[0][1]
+    x2 = lmList[17][0] - lmList[0][0]
+    y2 = lmList[17][1] - lmList[0][1]
+
+    rad = math.acos((x1*x2 + y1*y2) / (getDistance(lmList[1],lmList[0]) * getDistance(lmList[17],lmList[0])))
+    slope=rad*180/math.pi
+    # print(slope)
+    return slope
+
 def get_label(type,lmList):
     back = 1
+    below = 0
+    
+    angle = getAngle(lmList)
+    
     # 왼손 위
     if type=="Left" and (lmList[12][1] - lmList[0][1] < 0 ):      
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=-20):
+            if(lmList[5][0]-lmList[9][0]>=-0): # 손이 11시 or 1시 방향인지 check
                 # print("back ->")
                 back = 1
             else:
-                # print("front ->")
-                back = 0
+                if angle < 60 and angle > 110 :
+                    back=1
+                else:
+                    # print("front ->")
+                    back = 0
         else :
-            if(lmList[5][0]-lmList[9][0]>=-20):
+            if(lmList[5][0]-lmList[9][0]>=-0):
                 # print("back <-")
                 back = 1
             else:
-                # print("front <-")
-                back = 0
+                if angle < 60 and angle > 110 :
+                    back=1
+                else:
+                    # print("front <-")
+                    back = 0
 
     # 왼손 아래
     elif type=="Left" and (lmList[12][1] - lmList[0][1] >= 0 ):
+        below=1
+        # angle = angle-180
+        angle = 180- angle
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=20):
+            if(lmList[5][0]-lmList[9][0]>=0):
                 # print("front ->")
-                back = 0
+                if angle < 60 or angle > 110 :
+                    back=1
+                else:
+                    back = 0
             else:
                 # print("back ->")
                 back = 1
         else :
-            if(lmList[5][0]-lmList[9][0]>=20):
+            if(lmList[5][0]-lmList[9][0]>=0):
                 # print("front <-")
-                back = 0
+                if angle < 60 or angle > 110 :
+                    back=1
+                else:
+                    back = 0
             else:
                 # print("back <-")
                 back = 1
     # 오른손 아래
-    if type=="Right" and (lmList[12][1] - lmList[0][1] >= 0 ): 
+    if type=="Right" and (lmList[12][1] - lmList[0][1] >= 0 ):
+        below=1
+        angle = 180- angle
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=-20):
+            if(lmList[5][0]-lmList[9][0]>=-0):
                 # print("back ->")
                 back = 1
             else:
-                # print("front ->")
-                back = 0
+                if angle < 60 or angle > 110 :
+                    back=1
+                else:
+                    # print("front ->")
+                    back = 0
         else :
-            if(lmList[5][0]-lmList[9][0]>=-20):
+            if(lmList[5][0]-lmList[9][0]>=-0):
                 # print("back <-")
                 back = 1
             else:
-                # print("front <-")
-                back = 0
+                if angle < 60 or angle > 110 :
+                    back=1
+                else:
+                    # print("front <-")
+                    back = 0
     # 오른손 위
     elif type=="Right" and (lmList[12][1] - lmList[0][1] < 0 ): 
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
-            if(lmList[5][0]-lmList[9][0]>=20):
-                # print("front ->")
-                back = 0
+            if(lmList[5][0]-lmList[9][0]>=0):
+                if angle < 60 or angle > 110 :
+                    back=1
+                else:
+                    # print("front ->")
+                    back = 0
             else:
                 # print("back ->")
                 back = 1
         else :
-            if(lmList[5][0]-lmList[9][0]>=20):
-                back = 0
-                # print("front <-")
+            if(lmList[5][0]-lmList[9][0]>=0):
+                if angle < 60 or angle > 110 :
+                    back=1
+                else:
+                    back = 0
+                    # print("front <-")
             else:
                 # print("back <-")
                 back = 1
-
-    return back
+    print(angle)
+    return back,below
 
 def findFingerTipLength(toplist, botList):
             #return legnth of finger tip point
@@ -136,17 +181,17 @@ def findFingerTipPosition(img,lmList):
 
 # 거리 구하기
 def getDistance(x,y):
-    return (x[0]-y[0])*(x[0]-y[0])+(x[1]-y[1])*(x[1]-y[1])
+    return math.sqrt((x[0]-y[0])*(x[0]-y[0]) + (x[1]-y[1])*(x[1]-y[1]))
 
 # main input video
-cap = cv2.VideoCapture('./input.mp4')
-width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (int(width), int(height)))
+# cap = cv2.VideoCapture('./input.mp4')
+# width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+# height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+# fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+# out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (int(width), int(height)))
 
 # main : web cam check
-# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
 detector = HandDetector(detectionCon=0.7, maxHands=2)
 while True:
@@ -162,13 +207,17 @@ while True:
         handType1 = hand1["type"]  # Handtype Left or Right
 
         # 지문 블러처리
-        if get_label(handType1,lmList1) == 0:
+        back1, below1 = get_label(handType1,lmList1)
+        if back1 == 0:
             topList, botList = findFingerTipPosition(img,lmList1)
             L_list=findFingerTipLength(topList,botList)
             C_list=findFingerCenter(topList,botList)
             S_list=findFingerSlope(topList,botList,L_list)
             fingers1 = detector.fingersUp(hand1)
-            FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
+            if below1 == 1:
+                FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers1])
+            else:
+                FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
             
         if len(hands) == 2:
             # 손이 2개일 경우
@@ -176,19 +225,22 @@ while True:
             lmList2 = hand2["lmList"]  # 21개 랜드마크
             handType2 = hand2["type"]  # Hand Type "Left" or "Right"
             # 지문 블러처리
-            if get_label(handType2,lmList2) == 0:
+            back2, below2 = get_label(handType2,lmList2)
+            if back2 == 0:
                 topList, botList = findFingerTipPosition(img,lmList2)
                 L_list=findFingerTipLength(topList,botList)
                 C_list=findFingerCenter(topList,botList)
                 S_list=findFingerSlope(topList,botList,L_list)  
                 fingers2 = detector.fingersUp(hand2)
-                FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
-
+                if below2 == 1:
+                    FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers2])
+                else:
+                    FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
 
     # Display
-    # img = cv2.flip(img, 1)
+    img = cv2.flip(img, 1)
     cv2.imshow("Image", img)
-    out.write(img)
+    # out.write(img)
 
     if cv2.waitKey(10) & 0xFF == ord('q'):
             break
