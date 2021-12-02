@@ -9,10 +9,8 @@ def getAngle(lmList):
     y1 = lmList[1][1] - lmList[0][1]
     x2 = lmList[17][0] - lmList[0][0]
     y2 = lmList[17][1] - lmList[0][1]
-
     rad = math.acos((x1*x2 + y1*y2) / (getDistance(lmList[1],lmList[0]) * getDistance(lmList[17],lmList[0])))
     slope=rad*180/math.pi
-    # print(slope)
     return slope
 
 def get_label(type,lmList):
@@ -44,9 +42,8 @@ def get_label(type,lmList):
 
     # 왼손 아래
     elif type=="Left" and (lmList[12][1] - lmList[0][1] >= 0 ):
-        below=1
-        # angle = angle-180
-        angle = 180- angle
+        below = 1
+        angle = 180 - angle
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=0):
                 # print("front ->")
@@ -116,13 +113,13 @@ def get_label(type,lmList):
     return back,below
 
 def findFingerTipLength(toplist, botList):
-            #return legnth of finger tip point
-        L_list=[]
-        for i in range(len(toplist)):
-                x=toplist[i][0]-botList[i][0]
-                y=toplist[i][1]-botList[i][1]
-                L_list.append(math.sqrt(x*x + y*y))
-        return L_list
+    #return legnth of finger tip point
+    L_list=[]
+    for i in range(len(toplist)):
+            x=toplist[i][0]-botList[i][0]
+            y=toplist[i][1]-botList[i][1]
+            L_list.append(math.sqrt(x*x + y*y))
+    return L_list
 
 def findFingerCenter(toplist,botList):
     #return finger center point list
@@ -137,7 +134,6 @@ def findFingerSlope(topList,botList,L_list):
         if L_list[i]==0:
             L_list[i]=1
         rad=math.acos((topList[i][0]-botList[i][0])/L_list[i])
-        #rad->degree
         slope=rad*180/math.pi
 
         if topList[i][1]>=botList[i][1]: #손가락 아래쪽
@@ -171,17 +167,15 @@ def findFingerTipPosition(img,lmList):
         cx, cy = int(lm[0]), int(lm[1])
         if(id==3 or id==7 or id==11 or id==15 or id==19):
             botList.append([cx,cy])
-            # cv2.circle(img, (cx, cy), 3, (0, 0, 0), cv2.FILLED)
         elif(id==4 or id==8 or id==12 or id==16 or id==20):
             topList.append([cx,cy])
-            # cv2.circle(img, (cx, cy), 1, (0, 0, 0), cv2.FILLED)
     return topList,botList
 
 # 거리 구하기
 def getDistance(x,y):
     return math.sqrt((x[0]-y[0])*(x[0]-y[0]) + (x[1]-y[1])*(x[1]-y[1]))
 
-# main input video
+# main : input video
 cap = cv2.VideoCapture('./input.mp4')
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
@@ -195,8 +189,11 @@ detector = HandDetector(detectionCon=0.7, maxHands=2)
 while True:
     # Get image frame
     success, img = cap.read()
+    coloredImg = img.copy()
     # Find the hand and its landmarks
     hands = detector.findHands(img, draw=False)  # with draw
+    
+    print(int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
     
     if hands:
         # 손이 1개 일 경우
@@ -237,8 +234,16 @@ while True:
 
     # Display
     # img = cv2.flip(img, 1)
-    cv2.imshow("Image", img)
-    out.write(img)
+    # cv2.imshow("Image", img)
+    # out.write(img)
+
+    # 뿌옇게 blur 처리하기
+    Image_XOR = cv2.bitwise_xor(img, coloredImg)
+    Image_Blur = cv2.medianBlur(Image_XOR,3)
+    Prevent_Fingerprints_Image=cv2.add(Image_Blur,img)
+    
+    cv2.imshow("Image", Prevent_Fingerprints_Image)
+    out.write(Prevent_Fingerprints_Image)
 
     if cv2.waitKey(10) & 0xFF == ord('q'):
             break
