@@ -180,7 +180,8 @@ cap = cv2.VideoCapture('./input.mp4')
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (int(width), int(height)))
+fps = cap.get(cv2.CAP_PROP_FPS)
+out = cv2.VideoWriter('output.mp4', fourcc, fps, (int(width), int(height)))
 
 # main : web cam check
 # cap = cv2.VideoCapture(0)
@@ -192,8 +193,6 @@ while True:
     coloredImg = img.copy()
     # Find the hand and its landmarks
     hands = detector.findHands(img, draw=False)  # with draw
-    
-    print(int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
     
     if hands:
         # 손이 1개 일 경우
