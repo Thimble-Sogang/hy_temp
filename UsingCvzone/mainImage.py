@@ -175,20 +175,12 @@ def findFingerTipPosition(img,lmList):
 def getDistance(x,y):
     return math.sqrt((x[0]-y[0])*(x[0]-y[0]) + (x[1]-y[1])*(x[1]-y[1]))
 
-# main : input video
-# cap = cv2.VideoCapture('./input.mp4')
-# width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-# height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-# fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-# fps = cap.get(cv2.CAP_PROP_FPS)
-# out = cv2.VideoWriter('output.mp4', fourcc, fps, (int(width), int(height)))
-
-# main : web cam check
-# cap = cv2.VideoCapture(0)
-img=cv2.imread("./input.jpg")
+# main : input image
+img = cv2.imread("./input.jpg")
 detector = HandDetector(detectionCon=0.7, maxHands=2)
 
-coloredImg = img.copy()
+# coloredImg = img.copy()
+
 # Find the hand and its landmarks
 hands = detector.findHands(img, draw=False)  # with draw
 
@@ -229,10 +221,8 @@ if hands:
             else:
                 FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
     # Display
-    # img = cv2.flip(img, 1)
     cv2.imshow("Image", img)
-    # out.write(img)
-    cv2.imwrite('result.jpg',img)
+    cv2.imwrite('output.jpg',img)
     # 뿌옇게 blur 처리하기
     # Image_XOR = cv2.bitwise_xor(img, coloredImg)
     # Image_Blur = cv2.medianBlur(Image_XOR,3)
