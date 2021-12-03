@@ -21,23 +21,19 @@ def get_label(type,lmList):
     if type=="Left" and (lmList[12][1] - lmList[0][1] < 0 ):      
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=-0): # 손이 11시 or 1시 방향인지 check
-                # print("back ->")
                 back = 1
             else:
                 if angle < 70 and angle > 100 :
                     back=1
                 else:
-                    # print("front ->")
                     back = 0
         else :
             if(lmList[5][0]-lmList[9][0]>=-0):
-                # print("back <-")
                 back = 1
             else:
                 if angle < 70 and angle > 100 :
                     back=1
                 else:
-                    # print("front <-")
                     back = 0
 
     # 왼손 아래
@@ -46,23 +42,19 @@ def get_label(type,lmList):
         angle = 180 - angle
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=0):
-                # print("front ->")
                 if angle < 70 or angle > 100 :
                     back=1
                 else:
                     back = 0
             else:
-                # print("back ->")
                 back = 1
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
-                # print("front <-")
                 if angle < 70 or angle > 100 :
                     back=1
                 else:
                     back = 0
             else:
-                # print("back <-")
                 back = 1
     # 오른손 아래
     if type=="Right" and (lmList[12][1] - lmList[0][1] >= 0 ):
@@ -70,23 +62,19 @@ def get_label(type,lmList):
         angle = 180- angle
         if ((lmList[9][0]+lmList[13][0])/2 - lmList[0][0] <= 0) :
             if(lmList[5][0]-lmList[9][0]>=-0):
-                # print("back ->")
                 back = 1
             else:
                 if angle < 70 or angle > 100 :
                     back=1
                 else:
-                    # print("front ->")
                     back = 0
         else :
             if(lmList[5][0]-lmList[9][0]>=-0):
-                # print("back <-")
                 back = 1
             else:
                 if angle < 70 or angle > 100 :
                     back=1
                 else:
-                    # print("front <-")
                     back = 0
     # 오른손 위
     elif type=="Right" and (lmList[12][1] - lmList[0][1] < 0 ): 
@@ -95,10 +83,8 @@ def get_label(type,lmList):
                 if angle < 70 or angle > 100 :
                     back=1
                 else:
-                    # print("front ->")
                     back = 0
             else:
-                # print("back ->")
                 back = 1
         else :
             if(lmList[5][0]-lmList[9][0]>=0):
@@ -106,9 +92,7 @@ def get_label(type,lmList):
                     back=1
                 else:
                     back = 0
-                    # print("front <-")
             else:
-                # print("back <-")
                 back = 1
     return back,below
 
