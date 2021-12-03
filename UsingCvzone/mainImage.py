@@ -163,6 +163,7 @@ img = cv2.imread("./input.jpg")
 detector = HandDetector(detectionCon=0.7, maxHands=2)
 
 # coloredImg = img.copy()
+height, width, c = img.shape
 
 # Find the hand and its landmarks
 hands = detector.findHands(img, draw=False)  # with draw
