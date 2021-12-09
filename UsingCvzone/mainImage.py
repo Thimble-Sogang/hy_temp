@@ -2,6 +2,8 @@ from cvzone.HandTrackingModule import HandDetector
 import cv2
 import math
 import numpy as np
+import os
+import csv
 
 # 내부 함수
 def getAngle(lmList):
@@ -158,61 +160,74 @@ def findFingerTipPosition(img,lmList):
 def getDistance(x,y):
     return math.sqrt((x[0]-y[0])*(x[0]-y[0]) + (x[1]-y[1])*(x[1]-y[1]))
 
-# main : input image
-img = cv2.imread("./input.jpg")
-detector = HandDetector(detectionCon=0.7, maxHands=2)
+# 정확도 측정을 위한 write.csv 파일 생성
+f = open('./write.csv','a', newline='')
+wr = csv.writer(f)
 
-# coloredImg = img.copy()
-height, width, c = img.shape
+# # main : input image
+for i in os.listdir('./Hands/Hands/'):
+    print(i)
+    path = './Hands/Hands/' + i 
+    img = cv2.imread(path, cv2.IMREAD_COLOR)
+    detector = HandDetector(detectionCon=0.7, maxHands=2)
 
-# Find the hand and its landmarks
-hands = detector.findHands(img, draw=False)  # with draw
+    # coloredImg = img.copy()
+    height, width, c = img.shape
 
-if hands:
-    # 손이 1개 일 경우
-    hand1 = hands[0]
-    lmList1 = hand1["lmList"]  # 21개 랜드마크
-    handType1 = hand1["type"]  # Handtype Left or Right
+    # Find the hand and its landmarks
+    hands = detector.findHands(img, draw=False)  # with draw
 
-    # 지문 블러처리
-    back1, below1 = get_label(handType1,lmList1)
-    if back1 == 0:
-        topList, botList = findFingerTipPosition(img,lmList1)
-        L_list=findFingerTipLength(topList,botList)
-        C_list=findFingerCenter(topList,botList)
-        S_list=findFingerSlope(topList,botList,L_list)
-        fingers1 = detector.fingersUp(hand1)
-        if below1 == 1:
-            FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers1])
-        else:
-            FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
-        
-    if len(hands) == 2:
-        # 손이 2개일 경우
-        hand2 = hands[1]
-        lmList2 = hand2["lmList"]  # 21개 랜드마크
-        handType2 = hand2["type"]  # Hand Type "Left" or "Right"
+    if hands:
+        # 손이 1개 일 경우
+        hand1 = hands[0]
+        lmList1 = hand1["lmList"]  # 21개 랜드마크
+        handType1 = hand1["type"]  # Handtype Left or Right
+
         # 지문 블러처리
-        back2, below2 = get_label(handType2,lmList2)
-        if back2 == 0:
-            topList, botList = findFingerTipPosition(img,lmList2)
-            L_list=findFingerTipLength(topList,botList)
-            C_list=findFingerCenter(topList,botList)
-            S_list=findFingerSlope(topList,botList,L_list)  
-            fingers2 = detector.fingersUp(hand2)
-            if below2 == 1:
-                FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers2])
-            else:
-                FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
-    # Display
-    cv2.imshow("Image", img)
-    cv2.imwrite('output.jpg',img)
-    # 뿌옇게 blur 처리하기
-    # Image_XOR = cv2.bitwise_xor(img, coloredImg)
-    # Image_Blur = cv2.medianBlur(Image_XOR,3)
-    # Prevent_Fingerprints_Image=cv2.add(Image_Blur,img)
+        back1, below1 = get_label(handType1,lmList1)
+        # if back1 == 0:
+        #     topList, botList = findFingerTipPosition(img,lmList1)
+        #     L_list=findFingerTipLength(topList,botList)
+        #     C_list=findFingerCenter(topList,botList)
+        #     S_list=findFingerSlope(topList,botList,L_list)
+        #     fingers1 = detector.fingersUp(hand1)
+        #     if below1 == 1:
+        #         FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers1])
+        #     else:
+        #         FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
+            
+        # if len(hands) == 2:
+        #     # 손이 2개일 경우
+        #     hand2 = hands[1]
+        #     lmList2 = hand2["lmList"]  # 21개 랜드마크
+        #     handType2 = hand2["type"]  # Hand Type "Left" or "Right"
+        #     # 지문 블러처리
+        #     back2, below2 = get_label(handType2,lmList2)
+        #     if back2 == 0:
+        #         topList, botList = findFingerTipPosition(img,lmList2)
+        #         L_list=findFingerTipLength(topList,botList)
+        #         C_list=findFingerCenter(topList,botList)
+        #         S_list=findFingerSlope(topList,botList,L_list)  
+        #         fingers2 = detector.fingersUp(hand2)
+        #         if below2 == 1:
+        #             FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers2])
+        #         else:
+        #             FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
+        # Display
+        # cv2.imshow("Image", img)
+        
+        # 뿌옇게 blur 처9리하기
+        # Image_XOR = cv2.bitwise_xor(img, coloredImg)
+        # Image_Blur = cv2.medianBlur(Image_XqqOR,3)
+        # Prevent_Fingerprints_Image=cv2.add(Image_Blur,img)
 
-    # cv2.imshow("Image", Prevent_Fingerprints_Image)
-    # # cv2.imshow("Image", img)
-    # out.write(Prevent_Fingerprints_Image)
-cv2.destroyAllWindows()
+        # cv2.imshow("Image", Prevent_Fingerprints_Image)
+        # # cv2.imshow("Image", img)
+        # out.write(Prevent_Fingerprints_Image)
+    if(back1 == 0):
+        wr.writerow([i, 1])
+    else : 
+        wr.writerow([i, 0])
+
+    cv2.imwrite('./output/' + path[14:] , img)
+    cv2.destroyAllWindows()
