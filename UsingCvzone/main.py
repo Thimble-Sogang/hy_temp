@@ -178,6 +178,7 @@ detector = HandDetector(detectionCon=0.8, maxHands=2)
 while True:
     # Get image frame
     success, img = cap.read()
+    unModifiedImg = img.copy()
     # Find the hand and its landmarks
     hands = detector.findHands(img, draw=False)  # with draw
     
@@ -217,9 +218,12 @@ while True:
 
 
     # Display
-    img = cv2.flip(img, 1)
-    cv2.imshow("Image", img)
+    # img = cv2.flip(img, 1)
+    Image_XOR = cv2.bitwise_xor(img,unModifiedImg)
+    Image_Blur = cv2.medianBlur(Image_XOR,3)
+    Prevent_Fingerprints_Image=cv2.add(Image_Blur,img)
 
+    cv2.imshow("Image", Prevent_Fingerprints_Image)
     if cv2.waitKey(10) & 0xFF == ord('q'):
             break
     

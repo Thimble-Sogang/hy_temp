@@ -14,4 +14,6 @@ for line in rdr:
   if "dorsal" in line[6] and line[9]=="0":
     count+=1
 f.close()
+
 print(count / entire)
+print(entire)

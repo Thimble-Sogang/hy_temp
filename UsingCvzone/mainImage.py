@@ -184,36 +184,36 @@ for i in os.listdir('./Hands/Hands/'):
 
         # 지문 블러처리
         back1, below1 = get_label(handType1,lmList1)
-        if back1 == 0:
-            topList, botList = findFingerTipPosition(img,lmList1)
-            L_list=findFingerTipLength(topList,botList)
-            C_list=findFingerCenter(topList,botList)
-            S_list=findFingerSlope(topList,botList,L_list)
-            fingers1 = detector.fingersUp(hand1)
-            if below1 == 1:
-                FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers1])
-            else:
-                FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
+        # if back1 == 0:
+        #     topList, botList = findFingerTipPosition(img,lmList1)
+        #     L_list=findFingerTipLength(topList,botList)
+        #     C_list=findFingerCenter(topList,botList)
+        #     S_list=findFingerSlope(topList,botList,L_list)
+        #     fingers1 = detector.fingersUp(hand1)
+        #     if below1 == 1:
+        #         FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers1])
+        #     else:
+        #         FingerPrintExpress(img,C_list,L_list,S_list,fingers1)
             
-        if len(hands) == 2:
-            # 손이 2개일 경우
-            hand2 = hands[1]
-            lmList2 = hand2["lmList"]  # 21개 랜드마크
-            handType2 = hand2["type"]  # Hand Type "Left" or "Right"
-            # 지문 블러처리
-            back2, below2 = get_label(handType2,lmList2)
-            if back2 == 0:
-                topList, botList = findFingerTipPosition(img,lmList2)
-                L_list=findFingerTipLength(topList,botList)
-                C_list=findFingerCenter(topList,botList)
-                S_list=findFingerSlope(topList,botList,L_list)  
-                fingers2 = detector.fingersUp(hand2)
-                if below2 == 1:
-                    FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers2])
-                else:
-                    FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
+        # if len(hands) == 2:
+        #     # 손이 2개일 경우
+        #     hand2 = hands[1]
+        #     lmList2 = hand2["lmList"]  # 21개 랜드마크
+        #     handType2 = hand2["type"]  # Hand Type "Left" or "Right"
+        #     # 지문 블러처리
+        #     back2, below2 = get_label(handType2,lmList2)
+        #     if back2 == 0:
+        #         topList, botList = findFingerTipPosition(img,lmList2)
+        #         L_list=findFingerTipLength(topList,botList)
+        #         C_list=findFingerCenter(topList,botList)
+        #         S_list=findFingerSlope(topList,botList,L_list)  
+        #         fingers2 = detector.fingersUp(hand2)
+        #         if below2 == 1:
+        #             FingerPrintExpress(img,C_list,L_list,S_list,[not i for i in fingers2])
+        #         else:
+        #             FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
         # Display
-        cv2.imshow("Image", img)
+        # cv2.imshow("Image", img)
         
         # 뿌옇게 blur 처9리하기
         # Image_XOR = cv2.bitwise_xor(img, coloredImg)
@@ -227,5 +227,5 @@ for i in os.listdir('./Hands/Hands/'):
         wr.writerow([i, 1])
     else : 
         wr.writerow([i, 0])
-    # cv2.imwrite('./output/' + path[14:] , img)
+    cv2.imwrite('./output/' + path[14:] , img)
     cv2.destroyAllWindows()

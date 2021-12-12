@@ -115,6 +115,7 @@ class Thimble (QWidget):
         while True:
             # Get image frame
             success, img = cap.read()
+            unModifiedImg = img.copy()
             # coloredImg = img.copy() for realBlur
             if success == False :
                 break
@@ -164,6 +165,7 @@ class Thimble (QWidget):
                         else:
                             self.FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
 
+            # 검은 블러 처리
             out.write(img)
             rgbImage = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -172,12 +174,14 @@ class Thimble (QWidget):
             self.image_frame2.setPixmap(QPixmap.fromImage(self.send_image))
 
             # 뿌옇게 blur 처리하기
-            # Image_XOR = cv2.bitwise_xor(img, coloredImg)
-            # Image_Blur = cv2.medianBlur(Image_XOR,3)
+            # Image_XOR = cv2.bitwise_xor(img,unModifiedImg)
+            # Image_Blur = cv2.bilateralFilter(Image_XOR,9,75,75)
             # Prevent_Fingerprints_Image=cv2.add(Image_Blur,img)
 
-            # cv2.imshow("Image", Prevent_Fingerprints_Image)
-            # # cv2.imshow("Image", img)
+            # rgbImage = cv2.cvtColor(Prevent_Fingerprints_Image, cv2.COLOR_BGR2RGB)
+            # self.send_image = QImage(rgbImage, int(width), int(height), img.shape[1] * 3, QImage.Format_RGB888)
+            # self.send_image = self.send_image.scaledToWidth(640)
+            # self.image_frame2.setPixmap(QPixmap.fromImage(self.send_image))
             # out.write(Prevent_Fingerprints_Image)
 
             if cv2.waitKey(10) & 0xFF == ord('q'):
@@ -190,7 +194,8 @@ class Thimble (QWidget):
         ff = np.fromfile(self.fileName[0], np.uint8)
         img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)
         detector = HandDetector(detectionCon=0.7, maxHands=2)
-        # coloredImg = img.copy() for realBlur
+        unModifiedImg = img.copy()
+        
         width= np.shape(img)[0]
         height= np.shape(img)[1]
         hands = detector.findHands(img, draw=False)  # with draw
@@ -238,6 +243,7 @@ class Thimble (QWidget):
                     else:
                         self.FingerPrintExpress(img,C_list,L_list,S_list,fingers2)
 
+            # 검은 블러 처리
             self.imwrite(self.saveName[0], img)
            
             rgbImage = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -246,14 +252,17 @@ class Thimble (QWidget):
             self.send_image = self.send_image.scaledToWidth(640)
             self.image_frame2.setPixmap(QPixmap.fromImage(self.send_image))
 
-            # 뿌옇게 blur 처리하기
-            # Image_XOR = cv2.bitwise_xor(img, coloredImg)
-            # Image_Blur = cv2.medianBlur(Image_XOR,3)
+            #뿌옇게 blur 처리하기
+            # Image_XOR = cv2.bitwise_xor(img,unModifiedImg)
+            # Image_Blur = cv2.bilateralFilter(Image_XOR,9,75,75)
             # Prevent_Fingerprints_Image=cv2.add(Image_Blur,img)
 
-            # cv2.imshow("Image", Prevent_Fingerprints_Image)
-            # # cv2.imshow("Image", img)
-            # out.write(Prevent_Fingerprints_Image)
+            # rgbImage = cv2.cvtColor(Prevent_Fingerprints_Image, cv2.COLOR_BGR2RGB)
+            # self.send_image = QImage(rgbImage, int(width), int(height), img.shape[1] * 3, QImage.Format_RGB888)
+            # self.send_image = self.send_image.scaledToWidth(640)
+            # self.image_frame2.setPixmap(QPixmap.fromImage(self.send_image))
+            # self.imwrite(self.saveName[0], Prevent_Fingerprints_Image)
+            
             
     # 내부 함수
     def imread(self, filename, flags=cv2.IMREAD_COLOR, dtype=np.uint8):
