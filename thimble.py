@@ -115,10 +115,10 @@ class Thimble (QWidget):
         while True:
             # Get image frame
             success, img = cap.read()
-            unModifiedImg = img.copy()
             # coloredImg = img.copy() for realBlur
             if success == False :
                 break
+            unModifiedImg = img.copy()
             # Find the hand and its landmarks
             hands = detector.findHands(img, draw=False)  # with draw
 
