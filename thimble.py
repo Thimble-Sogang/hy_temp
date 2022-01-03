@@ -26,14 +26,8 @@ class Thimble (QWidget):
         mainwindow.frameGeometry().moveCenter(QScreen.availableGeometry(QApplication.primaryScreen()).center())
         mainwindow.move(mainwindow.frameGeometry().topLeft())
 
-        # Open file
-        #fileName, _ = QFileDialog.getOpenFileName(self, "파일 열기", "", "All Files (*)")
-
-
         self.grid = QGridLayout()
-
         self.setLayout(self.grid)
-
 
         self.image_frame1 = QLabel()
         self.image_frame1.setStyleSheet("border-style: solid;"
@@ -64,46 +58,40 @@ class Thimble (QWidget):
         addbutton1 = QPushButton('Open File', self)
 
         self.grid.addWidget(self.label1, 2, 1)
-
         self.grid.addWidget(addbutton1, 2, 2)
 
 
         addbutton1.clicked.connect(self.add_open)
-
         addbutton2 = QPushButton('Save File', self)
 
         self.grid.addWidget(self.label2, 3, 1)
-
         self.grid.addWidget(addbutton2, 3, 2)
 
         addbutton2.clicked.connect(self.add_save)
 
     def add_open(self):
         self.fileName = QFileDialog.getOpenFileName(self, 'Open file', './')
-
         self.label1.setText(self.fileName[0])
         
     def add_save(self):
 
         self.saveName = QFileDialog.getSaveFileName(self, 'Save file', './')
-
         self.label2.setText(self.saveName[0])
 
         addbutton3 = QPushButton('run Timble', self)
-        
-        self.grid.addWidget(addbutton3, 4, 2)
 
+        self.grid.addWidget(addbutton3, 4, 2)
         extension = self.fileName[0].split('.')[len(self.fileName[0].split('.'))-1].lower()
 
         if extension == "jpg" or extension == "jpeg" or extension == "bmp" or extension == "png" or extension == "jpg" :
             addbutton3.clicked.connect(self.run_ThimbleImage)
         else :
             addbutton3.clicked.connect(self.run_ThimbleVideo)
-        # change Video        
 
     def run_ThimbleVideo(self):
         print(self.fileName[0])
         print(self.saveName[0])
+
         cap = cv2.VideoCapture(self.fileName[0])
         width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
@@ -381,8 +369,8 @@ class Thimble (QWidget):
                     back = 1
         return back,below
 
+    #return legnth of finger tip point
     def findFingerTipLength(self, toplist, botList):
-        #return legnth of finger tip point
         L_list=[]
         for i in range(len(toplist)):
                 x=toplist[i][0]-botList[i][0]
@@ -390,8 +378,8 @@ class Thimble (QWidget):
                 L_list.append(math.sqrt(x*x + y*y))
         return L_list
 
+    #return finger center point list
     def findFingerCenter(self, toplist,botList):
-        #return finger center point list
         C_list=[]
         for i in range(len(toplist)):
             C_list.append([(toplist[i][0]+botList[i][0])/2,(toplist[i][1]+botList[i][1])/2])
